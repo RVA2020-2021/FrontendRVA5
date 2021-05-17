@@ -15,4 +15,17 @@ export class ArtiklService {
     return this.httpClient.get(`${ARTIKL_URL}`);
   }
 
+  public addArtikl(artikl: Artikl): Observable<any> {
+    artikl.id = 0;
+    return this.httpClient.post(`${ARTIKL_URL}`, artikl);
+  }
+
+  public updateArtikl(artikl: Artikl): Observable<any> {
+    return this.httpClient.put(`${ARTIKL_URL}`, artikl);
+  }
+
+  public deleteArtikl(id: number): Observable<any> {
+    return this.httpClient.delete(`${ARTIKL_URL}/${id}`);
+  }
+
 }
