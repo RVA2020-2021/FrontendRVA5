@@ -28,7 +28,10 @@ export class PorudzbinaDialogComponent implements OnInit, OnDestroy {
     this.dobavljacSubscription = this.dobavljacService.getAllDobavljac()
       .subscribe(dobavljaci => {
         this.dobavljaci = dobavljaci
-      })
+      }),
+      (error: Error) => {
+        console.log(error.name + ' ' + error.message);
+      }
   }
 
   ngOnDestroy(): void {

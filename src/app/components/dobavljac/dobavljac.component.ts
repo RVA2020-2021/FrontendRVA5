@@ -1,5 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Subscription } from 'rxjs';
 import { Dobavljac } from 'src/app/models/dobavljac';
@@ -16,6 +18,8 @@ export class DobavljacComponent implements OnInit {
   displayedColumns = ['id', 'adresa', 'kontakt', 'naziv', 'actions'];
   dataSource: MatTableDataSource<Dobavljac>;
   subscription: Subscription;
+  @ViewChild(MatSort, {static: false}) sort: MatSort;
+  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
 
   constructor(private dobavljacService: DobavljacService,
               public dialog: MatDialog) { }
@@ -33,6 +37,8 @@ export class DobavljacComponent implements OnInit {
       .subscribe(data => {
         // console.log(data);
         this.dataSource = new MatTableDataSource(data);
+        this.dataSource.sort = this.sort;
+        this.dataSource.paginator = this.paginator;
       }),
       (error: Error) => {
         console.log(error.name + ' ' + error.message);
@@ -49,5 +55,12 @@ export class DobavljacComponent implements OnInit {
         }
       })
   }
+
+  applyFilter(filterValue: string) {
+    filterValue = filterValue.trim();
+    filterValue = filterValue.toLocaleLowerCase();
+    this.dataSource.filter = filterValue; //    JaBuKa    --> JaBuKa --> jabuka
+  }
+
 
 }

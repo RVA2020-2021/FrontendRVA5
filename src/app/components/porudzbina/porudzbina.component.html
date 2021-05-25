@@ -3,6 +3,13 @@
 </mat-toolbar>
 
 <div class="container mat-elevation-z8">
+  <mat-form-field>
+    <input
+      matInput
+      (keyup)="applyFilter($event.target.value)"
+      placeholder="Filter"
+    />
+  </mat-form-field>
   <mat-table #table [dataSource]="dataSource" class="mat-cell" matSort>
     <ng-container matColumnDef="id">
       <mat-header-cell *matHeaderCellDef mat-sort-header>Id</mat-header-cell>
@@ -78,5 +85,16 @@
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
     <mat-row style="cursor: pointer" *matRowDef="let row; columns: displayedColumns;" (click)="selectRow(row)"></mat-row>
   </mat-table>
+  <mat-paginator
+    [length]="100"
+    [pageSize]="5"
+    [pageSizeOptions]="[5, 10, 25, 100]">
+  </mat-paginator>
 </div>
-
+<!-- Selektor stavka porudzbine -->
+<div class="container mat-elevation-z8">
+  <app-stavka-porudzbine
+    *ngIf="selektovanaPorudzbina"
+    [selektovanaPorudzbina]="selektovanaPorudzbina">
+  </app-stavka-porudzbine>
+</div>
