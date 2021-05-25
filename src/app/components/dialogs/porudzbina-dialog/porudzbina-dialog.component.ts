@@ -1,9 +1,10 @@
+import { Subscription } from 'rxjs';
 import { DobavljacService } from './../../../services/dobavljac.service';
 import { PorudzbinaService } from './../../../services/porudzbina.service';
 import { Porudzbina } from './../../../models/porudzbina';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { Dobavljac } from 'src/app/models/dobavljac';
 
 @Component({
@@ -11,10 +12,11 @@ import { Dobavljac } from 'src/app/models/dobavljac';
   templateUrl: './porudzbina-dialog.component.html',
   styleUrls: ['./porudzbina-dialog.component.css']
 })
-export class PorudzbinaDialogComponent implements OnInit {
+export class PorudzbinaDialogComponent implements OnInit, OnDestroy {
 
   dobavljaci: Dobavljac[];
   public flag: number;
+  dobavljacSubscription: Subscription;
 
   constructor(public snackBar: MatSnackBar,
               public dialogRef: MatDialogRef<PorudzbinaDialogComponent>,
@@ -23,10 +25,14 @@ export class PorudzbinaDialogComponent implements OnInit {
               public dobavljacService: DobavljacService) { }
 
   ngOnInit(): void {
-    this.dobavljacService.getAllDobavljac()
+    this.dobavljacSubscription = this.dobavljacService.getAllDobavljac()
       .subscribe(dobavljaci => {
         this.dobavljaci = dobavljaci
       })
+  }
+
+  ngOnDestroy(): void {
+    this.dobavljacSubscription.unsubscribe();
   }
 
   compareTo(a, b) {
