@@ -1,9 +1,10 @@
+import { Subscription } from 'rxjs';
 import { StavkaPorudzbineDialogComponent } from './../dialogs/stavka-porudzbine-dialog/stavka-porudzbine-dialog.component';
 import { Artikl } from './../../models/artikl';
 import { MatDialog } from '@angular/material/dialog';
 import { StavkaPorudzbineService } from './../../services/stavka-porudzbine.service';
 import { MatTableDataSource } from '@angular/material/table';
-import { Component, Input, OnChanges, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { StavkaPorudzbine } from 'src/app/models/stavkaPorudzbine';
 import { Porudzbina } from 'src/app/models/porudzbina';
 import { MatPaginator } from '@angular/material/paginator';
@@ -14,10 +15,11 @@ import { MatSort } from '@angular/material/sort';
   templateUrl: './stavka-porudzbine.component.html',
   styleUrls: ['./stavka-porudzbine.component.css']
 })
-export class StavkaPorudzbineComponent implements OnInit, OnChanges {
+export class StavkaPorudzbineComponent implements OnInit, OnChanges, OnDestroy {
 
   displayedColumns = ['id', 'redniBroj', 'kolicina', 'jedinicaMere', 'cena', 'porudzbina', 'artikl', 'actions'];
   dataSource: MatTableDataSource<StavkaPorudzbine>;
+  subscription: Subscription;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -32,6 +34,10 @@ export class StavkaPorudzbineComponent implements OnInit, OnChanges {
     // this.loadData();
   }
 
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
+  }
+
   ngOnChanges(): void {
     if(this.selektovanaPorudzbina.id) {
       this.loadData();
@@ -39,7 +45,7 @@ export class StavkaPorudzbineComponent implements OnInit, OnChanges {
   }
 
   public loadData() {
-    this.stavkaPorudzbineService.getStavkeZaPorudzbinu(this.selektovanaPorudzbina.id)
+    this.subscription = this.stavkaPorudzbineService.getStavkeZaPorudzbinu(this.selektovanaPorudzbina.id)
       .subscribe(data => {
         console.log(data);
         this.dataSource = new MatTableDataSource(data);

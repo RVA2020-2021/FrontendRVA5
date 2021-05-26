@@ -1,9 +1,10 @@
+import { Subscription } from 'rxjs';
 import { ArtiklService } from './../../../services/artikl.service';
 import { StavkaPorudzbineService } from './../../../services/stavka-porudzbine.service';
 import { StavkaPorudzbine } from './../../../models/stavkaPorudzbine';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, OnDestroy } from '@angular/core';
 import { Artikl } from 'src/app/models/artikl';
 
 @Component({
@@ -11,10 +12,11 @@ import { Artikl } from 'src/app/models/artikl';
   templateUrl: './stavka-porudzbine-dialog.component.html',
   styleUrls: ['./stavka-porudzbine-dialog.component.css']
 })
-export class StavkaPorudzbineDialogComponent implements OnInit {
+export class StavkaPorudzbineDialogComponent implements OnInit, OnDestroy {
 
   artikli: Artikl[];
   public flag: number;
+  artiklSubscription: Subscription;
 
   constructor(public snackBar: MatSnackBar,
               public dialogRef: MatDialogRef<StavkaPorudzbineDialogComponent>,
@@ -23,13 +25,17 @@ export class StavkaPorudzbineDialogComponent implements OnInit {
               public artiklService: ArtiklService) { }
 
   ngOnInit(): void {
-    this.artiklService.getAllArtikls()
+    this.artiklSubscription = this.artiklService.getAllArtikls()
       .subscribe(artikli => {
         this.artikli = artikli;
       }),
       (error: Error) => {
         console.log(error.name + ' ' + error.message);
       }
+  }
+
+  ngOnDestroy() {
+    this.artiklSubscription.unsubscribe();
   }
 
   compareTo(a, b) {
